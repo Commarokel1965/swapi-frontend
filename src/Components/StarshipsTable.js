@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Table, Button } from 'react-bootstrap';
 import StarshipDetails from './StarshipDetails';
 
+const BACKEND_SERVER = process.env.REACT_APP_EXPRESS_SERVER;
+const BACKEND_PORT = process.env.REACT_APP_EXPRESS_PORT;
+
 const StarshipsTable = () => {
   const [starships, setStarships] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
@@ -12,7 +15,7 @@ const StarshipsTable = () => {
   useEffect(() => {
     const fetchStarships = async () => {
       try {
-        const response = await axios.get('http://192.168.0.36:5000/api/starships');
+        const response = await axios.get(`http://${BACKEND_SERVER}:${BACKEND_PORT}/api/starships`);
         setStarships(response.data);
         setLoading(false);
       } catch (error) {
