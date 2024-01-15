@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Row, Col, Spinner } from 'react-bootstrap';
 import StarshipDetails from './StarshipDetails';
 import CustomPagination from './Pagination';
 
@@ -31,6 +31,7 @@ const StarshipsTable = () => {
   }, [currentPage]);
 
   const handlePageChange = (page) => {
+    setLoading(true);
     setCurrentPage(page);
   };
 
@@ -47,7 +48,13 @@ const StarshipsTable = () => {
     <div className="container mt-4">
       <h2>Star Wars Starships</h2>
       {loading ? (
-        <div>Loading...</div>
+        <Row className="mt-2">
+            <Col className="d-flex justify-content-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </Col>
+        </Row>
       ) : (
         <>
           <Table className="table table-responsive">
