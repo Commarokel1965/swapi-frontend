@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, Button, Row, Col, Spinner } from 'react-bootstrap';
+import { Table, Button, Row, Col, Spinner, Form } from 'react-bootstrap';
+import { Search, Eye } from 'react-bootstrap-icons';
 import StarshipDetails from './StarshipDetails';
 import CustomPagination from './Pagination';
 
@@ -11,24 +12,26 @@ const StarshipsTable = () => {
   const [starships, setStarships] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedStarship, setSelectedStarship] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 4; // swapi.dev total number of pages
 
   useEffect(() => {
-    const fetchStarships = async () => {
-      try {
-        const response = await axios.get(`http://${BACKEND_SERVER}:${BACKEND_PORT}/api/starships?page=${currentPage}`);
-        setStarships(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching starships:', error.message);
-        setLoading(false);
-      }
-    };
-
     fetchStarships();
   }, [currentPage]);
+  
+  const fetchStarships = async () => {
+    try {
+      const response = await axios.get(`http://${BACKEND_SERVER}:${BACKEND_PORT}/api/starships?page=${currentPage}&search=${searchTerm}`);
+      setStarships(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching starships:', error.message);
+      setLoading(false);
+    }
+  };
 
   const handlePageChange = (page) => {
     setLoading(true);
@@ -44,9 +47,33 @@ const StarshipsTable = () => {
     setShowDetails(false);
   };
 
+  const handleSearch = (event) => {
+    fetchStarships();
+  };
+
   return (
     <div className="container mt-4">
       <h2>Star Wars Starships</h2>
+      <hr className="my-4" />
+      
+      <Form>
+        <Row className="mb-4">
+          <div className="col-2">
+            <Form.Control
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="col-1">
+            <Button onClick={handleSearch}>
+              <Search />
+            </Button>
+          </div>
+        </Row>
+      </Form>
+
       {loading ? (
         <Row className="mt-2">
             <Col className="d-flex justify-content-center">
@@ -57,7 +84,7 @@ const StarshipsTable = () => {
         </Row>
       ) : (
         <>
-          <Table className="table table-responsive">
+          <Table striped bordered hover className="table table-responsive">
             <thead>
               <tr>
                 <th>Name</th>
@@ -76,7 +103,7 @@ const StarshipsTable = () => {
                   <td>{starship.starship_class}</td>
                   <td>
                     <Button variant="primary" onClick={() => handleShowDetails(starship)}>
-                      View Details
+                      <Eye />
                     </Button>
                   </td>
                 </tr>
