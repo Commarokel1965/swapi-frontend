@@ -13,7 +13,7 @@ const renderListSection = (title, items) => {
         <ul>
           {items.map((item, index) => (
             <li key={index}>
-              <a href={item} target="_blank">
+              <a href={item} target="_blank" rel="noreferrer">
                 {item}
               </a>
             </li>
